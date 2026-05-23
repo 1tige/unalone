@@ -1,0 +1,13 @@
+{
+  "name": "unalone",
+  "version": "1.0.0",
+  "description": "You were never meant to be alone — real-time chat that matches lonely people by interest.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  }
+}

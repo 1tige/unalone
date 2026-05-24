@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unalone — You were never meant to be alone</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0F1117; --bg-soft:#171A23; --bg-card:#1C2029; --line:#2A2F3C;
+    --primary:#7F77DD; --primary-soft:#534AB7; --primary-glow:rgba(127,119,221,.35);
+    --accent:#1D9E75; --text:#F4F5FA; --text-dim:#9498A6; --text-faint:#5C606E;
+    --bubble-me:#534AB7; --bubble-them:#222632;
+    --font:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{font-family:var(--font);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:radial-gradient(620px circle at 18% 12%,rgba(127,119,221,.16),transparent 60%),radial-gradient(520px circle at 85% 88%,rgba(29,158,117,.10),transparent 60%)}
+  .app{position:relative;z-index:1;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+
+  .screen{display:none;width:100%;max-width:520px;animation:rise .5s cubic-bezier(.16,1,.3,1)}
+  .screen.active{display:block}
+  @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+  .brand{text-align:center;margin-bottom:34px}
+  .logo{display:inline-flex;align-items:center;gap:11px;margin-bottom:14px}
+  .logo .mark{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-soft));display:flex;align-items:center;justify-content:center;box-shadow:0 0 28px var(--primary-glow)}
+  .logo .name{font-size:28px;font-weight:800;letter-spacing:-1px}
+  .slogan{font-size:15px;color:var(--text-dim);font-weight:500}
+  .slogan b{color:var(--primary);font-weight:600}
+
+  .panel{background:linear-gradient(180deg,var(--bg-soft),var(--bg-card));border:1px solid var(--line);border-radius:24px;padding:32px 28px;box-shadow:0 30px 60px -30px rgba(0,0,0,.7)}
+  .panel h2{font-size:21px;font-weight:700;margin-bottom:6px;letter-spacing:-.4px}
+  .panel p.hint{font-size:14px;color:var(--text-dim);margin-bottom:22px;line-height:1.5}
+  input[type=text]{width:100%;background:var(--bg);border:1.5px solid var(--line);color:var(--text);font-family:var(--font);font-size:17px;font-weight:500;padding:15px 17px;border-radius:14px;outline:none;transition:.18s}
+  input[type=text]:focus{border-color:var(--primary);box-shadow:0 0 0 4px var(--primary-glow)}
+  input[type=text]::placeholder{color:var(--text-faint)}
+
+  .btn{width:100%;border:none;cursor:pointer;font-family:var(--font);font-size:16px;font-weight:700;padding:16px;border-radius:14px;background:linear-gradient(135deg,var(--primary),var(--primary-soft));color:#fff;transition:.18s;margin-top:20px;letter-spacing:.2px;box-shadow:0 12px 30px -10px var(--primary-glow)}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 18px 36px -12px var(--primary-glow)}
+  .btn:active{transform:translateY(0)}
+  .btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+  .btn.ghost{background:transparent;border:1.5px solid var(--line);box-shadow:none;color:var(--text-dim)}
+  .btn.ghost:hover{border-color:var(--primary);color:var(--text)}
+
+  .chips{display:flex;flex-wrap:wrap;gap:10px}
+  .chip{border:1.5px solid var(--line);background:var(--bg);color:var(--text-dim);font-family:var(--font);font-size:14px;font-weight:600;padding:11px 16px;border-radius:40px;cursor:pointer;transition:.16s;display:inline-flex;align-items:center;gap:7px;user-select:none}
+  .chip .ico{font-size:16px}
+  .chip:hover{border-color:var(--primary-soft);color:var(--text)}
+  .chip.on{background:linear-gradient(135deg,var(--primary),var(--primary-soft));border-color:transparent;color:#fff;box-shadow:0 8px 20px -8px var(--primary-glow)}
+  .count-line{font-size:13px;color:var(--text-faint);margin-top:18px;text-align:center}
+
+  .search-wrap{text-align:center;padding:14px 0}
+  .pulse{width:120px;height:120px;margin:8px auto 26px;border-radius:50%;position:relative;display:flex;align-items:center;justify-content:center}
+  .pulse .core{width:64px;height:64px;border-radius:50%;z-index:2;background:linear-gradient(135deg,var(--primary),var(--primary-soft));display:flex;align-items:center;justify-content:center;box-shadow:0 0 40px var(--primary-glow)}
+  .pulse .ring{position:absolute;inset:0;border-radius:50%;border:2px solid var(--primary);opacity:0;animation:ping 2s ease-out infinite}
+  .pulse .ring:nth-child(2){animation-delay:.6s}
+  .pulse .ring:nth-child(3){animation-delay:1.2s}
+  @keyframes ping{0%{transform:scale(.55);opacity:.7}100%{transform:scale(1);opacity:0}}
+  .search-wrap h2{font-size:22px;font-weight:700;margin-bottom:8px}
+  .search-wrap p{color:var(--text-dim);font-size:14px;line-height:1.55}
+  .online{display:inline-flex;align-items:center;gap:9px;margin:22px auto 4px;background:var(--bg);border:1px solid var(--line);border-radius:40px;padding:10px 18px}
+  .online .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent);animation:blink 1.6s infinite}
+  @keyframes blink{50%{opacity:.35}}
+  .online .num{font-weight:800;color:var(--text);font-variant-numeric:tabular-nums}
+  .online .lbl{font-size:13px;color:var(--text-dim)}
+
+  #screen-chat .panel{padding:0;overflow:hidden;display:flex;flex-direction:column;height:78vh;max-height:680px}
+  .chat-head{display:flex;align-items:center;gap:12px;padding:15px 18px;border-bottom:1px solid var(--line);background:var(--bg-soft);flex-shrink:0}
+  .avatar{width:44px;height:44px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:17px;color:#fff}
+  .chat-head .who{flex:1;min-width:0}
+  .chat-head .who .nm{font-weight:700;font-size:16px}
+  .chat-head .who .st{font-size:12.5px;color:var(--accent);font-weight:600;margin-top:1px}
+  .chat-head .who .tags{font-size:12px;color:var(--text-faint);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .icon-btn{background:var(--bg);border:1px solid var(--line);color:var(--text-dim);width:40px;height:40px;border-radius:11px;cursor:pointer;font-size:18px;transition:.16s;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+  .icon-btn:hover{color:var(--text);border-color:var(--primary-soft)}
+
+  .messages{flex:1;overflow-y:auto;padding:20px 18px;display:flex;flex-direction:column;gap:11px}
+  .messages::-webkit-scrollbar{width:7px}
+  .messages::-webkit-scrollbar-thumb{background:var(--line);border-radius:10px}
+  .sys{align-self:center;font-size:12.5px;color:var(--text-faint);background:var(--bg);border:1px solid var(--line);padding:6px 14px;border-radius:30px;margin:2px 0;text-align:center;max-width:90%}
+  .msg{max-width:78%;padding:11px 15px;border-radius:18px;font-size:15px;line-height:1.45;animation:pop .25s ease;word-wrap:break-word}
+  @keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .msg.them{align-self:flex-start;background:var(--bubble-them);border-bottom-left-radius:6px}
+  .msg.me{align-self:flex-end;background:var(--bubble-me);border-bottom-right-radius:6px}
+  .msg img{max-width:100%;border-radius:12px;display:block}
+  .msg.emoji-only{font-size:38px;padding:4px 8px;background:transparent}
+  .typing{align-self:flex-start;background:var(--bubble-them);padding:14px 16px;border-radius:18px;border-bottom-left-radius:6px;display:flex;gap:5px}
+  .typing span{width:7px;height:7px;border-radius:50%;background:var(--text-dim);animation:bob 1.2s infinite}
+  .typing span:nth-child(2){animation-delay:.2s}
+  .typing span:nth-child(3){animation-delay:.4s}
+  @keyframes bob{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-5px);opacity:1}}
+
+  .composer{padding:12px 14px;border-top:1px solid var(--line);background:var(--bg-soft);flex-shrink:0}
+  .emoji-bar{display:none;flex-wrap:wrap;gap:4px;padding:6px 2px 10px}
+  .emoji-bar.show{display:flex}
+  .emoji-bar button{background:none;border:none;font-size:23px;cursor:pointer;padding:4px;border-radius:8px;transition:.12s}
+  .emoji-bar button:hover{background:var(--bg);transform:scale(1.18)}
+  .composer-row{display:flex;align-items:center;gap:8px}
+  .composer input{flex:1;background:var(--bg);border:1.5px solid var(--line);color:var(--text);font-family:var(--font);font-size:15px;padding:13px 16px;border-radius:13px;outline:none;transition:.16s}
+  .composer input:focus{border-color:var(--primary)}
+  .send{width:46px;height:46px;border-radius:13px;border:none;cursor:pointer;flex-shrink:0;background:linear-gradient(135deg,var(--primary),var(--primary-soft));color:#fff;font-size:19px;transition:.16s;display:flex;align-items:center;justify-content:center}
+  .send:hover{transform:scale(1.05)}
+
+  .chat-actions{display:flex;gap:8px;padding:0 14px 14px;background:var(--bg-soft)}
+  .chat-actions .btn{margin-top:0;font-size:14.5px;padding:13px}
+  .chat-actions .next{background:linear-gradient(135deg,#3a7fd6,#2c5fa5);box-shadow:none}
+  .chat-actions .bye{background:transparent;border:1.5px solid var(--line);color:var(--text-dim);box-shadow:none}
+  .chat-actions .bye:hover{border-color:#b3433f;color:#fff;background:#b3433f}
+
+  .end-wrap{text-align:center;padding:10px 0}
+  .end-wrap .big{font-size:54px;margin-bottom:14px}
+  .end-wrap h2{font-size:23px;font-weight:700;margin-bottom:10px}
+  .end-wrap p{color:var(--text-dim);font-size:15px;line-height:1.6;margin-bottom:6px}
+  .end-stats{display:flex;gap:10px;margin:24px 0 4px}
+  .stat{flex:1;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:16px 10px}
+  .stat .v{font-size:24px;font-weight:800;color:var(--primary)}
+  .stat .l{font-size:12px;color:var(--text-dim);margin-top:3px}
+
+  .footnote{text-align:center;font-size:12px;color:var(--text-faint);margin-top:18px;line-height:1.5}
+  .conn{position:fixed;top:12px;right:14px;z-index:5;font-size:12px;color:var(--text-faint);display:flex;align-items:center;gap:6px;background:var(--bg-soft);border:1px solid var(--line);padding:6px 12px;border-radius:30px}
+  .conn .d{width:8px;height:8px;border-radius:50%;background:#b3433f}
+  .conn.up .d{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+  input[type=file]{display:none}
+</style>
+</head>
+<body>
+<div class="conn" id="conn"><span class="d"></span><span id="connTxt">connecting…</span></div>
+<div class="app">
+
+  <!-- STEP 1: NAME -->
+  <section class="screen active" id="screen-name">
+    <div class="brand">
+      <div class="logo"><div class="mark"><svg width="20" height="20" viewBox="0 0 18 18" fill="none"><circle cx="6" cy="7" r="3" stroke="#fff" stroke-width="1.6"/><circle cx="12" cy="7" r="3" stroke="#fff" stroke-width="1.6"/><path d="M1 15c0-2.5 2-4 5-4s5 1.5 5 4" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/><path d="M12 11c2 0 5 1 5 4" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg></div><span class="name">unalone</span></div>
+      <div class="slogan">You were never meant to be <b>alone.</b></div>
+    </div>
+    <div class="panel">
+      <h2>Hey there 👋</h2>
+      <p class="hint">Feeling lonely, anxious, or just missing a real conversation? You're in the right place. What's your name?</p>
+      <input type="text" id="nameInput" placeholder="Your name" maxlength="20" autocomplete="off">
+      <button class="btn" id="nameBtn" disabled>Continue</button>
+    </div>
+    <div class="footnote">No sign-up. Just real conversations.</div>
+  </section>
+
+  <!-- STEP 2: INTERESTS -->
+  <section class="screen" id="screen-interests">
+    <div class="brand"><div class="logo"><div class="mark"><svg width="20" height="20" viewBox="0 0 18 18" fill="none"><circle cx="6" cy="7" r="3" stroke="#fff" stroke-width="1.6"/><circle cx="12" cy="7" r="3" stroke="#fff" stroke-width="1.6"/><path d="M1 15c0-2.5 2-4 5-4s5 1.5 5 4" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/><path d="M12 11c2 0 5 1 5 4" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg></div><span class="name">unalone</span></div></div>
+    <div class="panel">
+      <h2 id="greetName">What are you into?</h2>
+      <p class="hint">Pick the topics close to your heart — we'll match you with people you'll actually click with.</p>
+      <div class="chips" id="chips"></div>
+      <div class="count-line" id="pickCount">Pick at least one topic</div>
+      <button class="btn" id="interestsBtn" disabled>Search for talk →</button>
+    </div>
+  </section>
+
+  <!-- STEP 3: SEARCHING -->
+  <section class="screen" id="screen-search">
+    <div class="panel">
+      <div class="search-wrap">
+        <div class="pulse"><span class="ring"></span><span class="ring"></span><span class="ring"></span>
+          <div class="core"><svg width="26" height="26" viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="7" stroke="#fff" stroke-width="2"/><path d="M16 16l5 5" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+        </div>
+        <h2>Looking for someone…</h2>
+        <p id="searchSub">Matching you with people who share your vibe</p>
+        <div class="online"><span class="dot"></span><span class="num" id="onlineNum">0</span><span class="lbl">people online</span></div>
+      </div>
+      <button class="btn ghost" id="cancelSearch">Cancel</button>
+    </div>
+  </section>
+
+  <!-- STEP 4: CHAT -->
+  <section class="screen" id="screen-chat">
+    <div class="panel">
+      <div class="chat-head">
+        <div class="avatar" id="chatAvatar">A</div>
+        <div class="who"><div class="nm" id="chatName">—</div><div class="st">online</div><div class="tags" id="chatTags"></div></div>
+        <div class="icon-btn" id="onlineMini" style="width:auto;padding:0 12px;gap:6px;font-size:13px;font-weight:700;cursor:default"><span class="d" style="width:8px;height:8px;border-radius:50%;background:var(--accent);display:inline-block"></span><span id="onlineMiniNum">0</span></div>
+      </div>
+      <div class="messages" id="messages"></div>
+      <div class="composer">
+        <div class="emoji-bar" id="emojiBar"></div>
+        <div class="composer-row">
+          <button class="icon-btn" id="emojiToggle" title="emoji">😊</button>
+          <button class="icon-btn" id="photoBtn" title="send a photo"><svg width="19" height="19" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2.5" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.6" fill="currentColor"/><path d="M5 18l4.5-5 3 3.2L15 13l4 5" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg></button>
+          <input type="file" id="photoInput" accept="image/*">
+          <input type="text" id="msgInput" placeholder="Type a message…" autocomplete="off">
+          <button class="send" id="sendBtn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 12l16-8-6 16-3-6-7-2z" fill="#fff"/></svg></button>
+        </div>
+      </div>
+      <div class="chat-actions">
+        <button class="btn next" id="nextBtn">⏭ Next talk</button>
+        <button class="btn bye" id="byeBtn">Say goodbye</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 5: END -->
+  <section class="screen" id="screen-end">
+    <div class="panel">
+      <div class="end-wrap">
+        <div class="big">🌿</div>
+        <h2>Take care!</h2>
+        <p>You weren't alone today — and that matters.</p>
+        <p style="color:var(--text-faint);font-size:13px">Come back whenever you feel like talking.</p>
+        <div class="end-stats">
+          <div class="stat"><div class="v" id="statTalks">0</div><div class="l">conversations</div></div>
+          <div class="stat"><div class="v" id="statMsgs">0</div><div class="l">messages</div></div>
+        </div>
+        <button class="btn" id="againBtn">Talk again</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+<script>
+/* ---------- interests ---------- */
+const INTERESTS = [
+  {id:'music',ico:'🎧',label:'Music'},{id:'games',ico:'🎮',label:'Gaming'},
+  {id:'movies',ico:'🎬',label:'Movies & TV'},{id:'books',ico:'📚',label:'Books'},
+  {id:'support',ico:'🫂',label:'Support'},{id:'sport',ico:'⚽',label:'Sports'},
+  {id:'art',ico:'🎨',label:'Art'},{id:'tech',ico:'💻',label:'Tech'},
+  {id:'travel',ico:'✈️',label:'Travel'},{id:'food',ico:'🍜',label:'Food'},
+  {id:'pets',ico:'🐾',label:'Pets'},{id:'study',ico:'🎓',label:'Studying'},
+  {id:'memes',ico:'😂',label:'Memes'},{id:'night',ico:'🌙',label:'Late-night thoughts'},
+];
+const AVATAR_COLORS=['#7F77DD','#1D9E75','#D85A30','#D4537E','#378ADD','#BA7517','#534AB7','#0F6E56'];
+const EMOJIS=['😊','😂','🥹','😍','🤔','😎','🫶','👍','🔥','✨','🎉','😅','😭','🙃','🤝','💜','🌙','☕','🐾','🎧'];
+const LABEL=id=>{const i=INTERESTS.find(x=>x.id===id);return i?i.ico+' '+i.label:id;};
+
+/* ---------- state ---------- */
+const state={name:'',interests:[],talks:0,totalMsgs:0,inRoom:false};
+
+/* ---------- dom helpers ---------- */
+const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
+function show(id){$$('.screen').forEach(s=>s.classList.remove('active'));$('#'+id).classList.add('active');}
+function isOnlyEmoji(s){return /^(\s*[\p{Emoji}\u200d\uFE0F]+\s*)+$/u.test(s)&&s.length<=6;}
+
+/* ---------- socket ---------- */
+const socket = io(); // same origin as the server
+socket.on('connect',()=>{$('#conn').classList.add('up');$('#connTxt').textContent='connected';});
+socket.on('disconnect',()=>{$('#conn').classList.remove('up');$('#connTxt').textContent='disconnected';});
+
+socket.on('online', n=>{$('#onlineNum').textContent=n;$('#onlineMiniNum').textContent=n;});
+
+socket.on('matched', ({partner, shared, matchedByInterest})=>{
+  state.inRoom=true; state.talks++;
+  const color=AVATAR_COLORS[Math.floor(Math.random()*AVATAR_COLORS.length)];
+  $('#chatAvatar').textContent=partner.name[0].toUpperCase();
+  $('#chatAvatar').style.background=color;
+  $('#chatName').textContent=partner.name;
+  const tagSet = (shared&&shared.length?shared:partner.interests)||[];
+  $('#chatTags').textContent=tagSet.map(LABEL).join('   ·   ');
+  $('#messages').innerHTML='';
+  if(matchedByInterest && shared.length){
+    addSys(`You both love ${shared.map(s=>LABEL(s).split(' ').slice(1).join(' ').toLowerCase()).join(', ')} — great start!`);
+  }else{
+    addSys('A new person just joined you. Just be yourself 💜');
+  }
+  show('screen-chat'); $('#msgInput').focus();
+});
+
+socket.on('message', text=> addMsg('them', text));
+socket.on('image', dataUrl=> addMsg('them', dataUrl, true));
+socket.on('typing', on=> on?showTyping():hideTyping());
+socket.on('partner_left', ()=>{
+  hideTyping();
+  addSys('Your partner left the chat. Finding someone new…');
+  state.inRoom=false;
+  setTimeout(doSearch, 700);
+});
+
+/* ---------- step 1: name ---------- */
+const nameInput=$('#nameInput'),nameBtn=$('#nameBtn');
+nameInput.addEventListener('input',()=>nameBtn.disabled=nameInput.value.trim().length<1);
+nameInput.addEventListener('keydown',e=>{if(e.key==='Enter'&&!nameBtn.disabled)nameBtn.click();});
+nameBtn.addEventListener('click',()=>{
+  state.name=nameInput.value.trim();
+  $('#greetName').textContent=`${state.name}, what are you into?`;
+  show('screen-interests');
+});
+
+/* ---------- step 2: interests ---------- */
+const chips=$('#chips');
+INTERESTS.forEach(it=>{
+  const el=document.createElement('div');
+  el.className='chip';el.dataset.id=it.id;
+  el.innerHTML=`<span class="ico">${it.ico}</span>${it.label}`;
+  el.addEventListener('click',()=>{
+    el.classList.toggle('on');
+    state.interests=[...$$('.chip.on')].map(c=>c.dataset.id);
+    const n=state.interests.length;
+    $('#pickCount').textContent=n?`Selected: ${n}`:'Pick at least one topic';
+    $('#interestsBtn').disabled=n<1;
+  });
+  chips.appendChild(el);
+});
+$('#interestsBtn').addEventListener('click', doSearch);
+
+/* ---------- step 3: search ---------- */
+function doSearch(){
+  show('screen-search');
+  $('#searchSub').textContent='Matching you with people who share your vibe';
+  socket.emit('find',{name:state.name,interests:state.interests});
+}
+$('#cancelSearch').addEventListener('click',()=>{socket.emit('cancel');show('screen-interests');});
+
+/* ---------- step 4: chat ---------- */
+function addSys(t){const d=document.createElement('div');d.className='sys';d.textContent=t;$('#messages').appendChild(d);scrollDown();}
+function addMsg(who,text,isImg){
+  const d=document.createElement('div');
+  d.className='msg '+who+(!isImg&&isOnlyEmoji(text)?' emoji-only':'');
+  if(isImg){const img=document.createElement('img');img.src=text;d.appendChild(img);}
+  else d.textContent=text;
+  $('#messages').appendChild(d);scrollDown();
+  if(who==='me'){state.totalMsgs++;}
+}
+function scrollDown(){const m=$('#messages');m.scrollTop=m.scrollHeight;}
+
+let typingEl=null;
+function showTyping(){if(typingEl)return;typingEl=document.createElement('div');typingEl.className='typing';typingEl.innerHTML='<span></span><span></span><span></span>';$('#messages').appendChild(typingEl);scrollDown();}
+function hideTyping(){if(typingEl){typingEl.remove();typingEl=null;}}
+
+/* send */
+const msgInput=$('#msgInput');
+let typingTimer=null;
+msgInput.addEventListener('input',()=>{
+  socket.emit('typing',true);
+  clearTimeout(typingTimer);
+  typingTimer=setTimeout(()=>socket.emit('typing',false),900);
+});
+function send(){
+  const t=msgInput.value.trim();if(!t||!state.inRoom)return;
+  addMsg('me',t);socket.emit('message',t);
+  socket.emit('typing',false);
+  msgInput.value='';$('#emojiBar').classList.remove('show');
+}
+$('#sendBtn').addEventListener('click',send);
+msgInput.addEventListener('keydown',e=>{if(e.key==='Enter')send();});
+
+/* emoji */
+const emojiBar=$('#emojiBar');
+EMOJIS.forEach(e=>{const b=document.createElement('button');b.textContent=e;b.addEventListener('click',()=>{msgInput.value+=e;msgInput.focus();});emojiBar.appendChild(b);});
+$('#emojiToggle').addEventListener('click',()=>emojiBar.classList.toggle('show'));
+
+/* photo */
+$('#photoBtn').addEventListener('click',()=>$('#photoInput').click());
+$('#photoInput').addEventListener('change',e=>{
+  const f=e.target.files[0];if(!f||!state.inRoom)return;
+  if(f.size>5e6){alert('Please pick an image under 5 MB.');e.target.value='';return;}
+  const r=new FileReader();
+  r.onload=ev=>{addMsg('me',ev.target.result,true);socket.emit('image',ev.target.result);};
+  r.readAsDataURL(f);e.target.value='';
+});
+
+/* next / goodbye */
+$('#nextBtn').addEventListener('click',()=>{
+  if(state.inRoom){socket.emit('next');addSys('You ended the chat. Finding someone new…');}
+  state.inRoom=false;hideTyping();
+  setTimeout(doSearch,500);
+});
+$('#byeBtn').addEventListener('click',()=>{
+  socket.emit('leave');state.inRoom=false;hideTyping();
+  $('#statTalks').textContent=state.talks;
+  $('#statMsgs').textContent=state.totalMsgs;
+  show('screen-end');
+});
+$('#againBtn').addEventListener('click',()=>{state.talks=0;state.totalMsgs=0;doSearch();});
+</script>
+</body>
+</html>
